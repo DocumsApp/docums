@@ -1,0 +1,6 @@
+docums/themes/**/js/highlight.pack.js
+docums/themes/**/js/jquery-**.min.js
+docums/themes/**/js/bootstrap-**.min.js
+docums/themes/**/js/modernizr-**.min.js
+docums/contrib/search/templates/search/lunr.js
+docums/contrib/search/lunr-language/lunr.**.js

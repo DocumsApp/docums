@@ -1,0 +1,46 @@
+site_name: Docums
+site_url: https://khanhduy1407.github.io/docums
+site_description: Open source documentation website
+site_author: Docums Team
+
+repo_url: https://github.com/khanhduy1407/docums/
+edit_uri: ""
+
+theme:
+    name: docums
+    highlightjs: true
+    hljs_languages:
+        - yaml
+        - django
+
+nav:
+    - Home: index.md
+    - User Guide:
+        - Writing Your Docs: user-guide/writing-your-docs.md
+        - Styling Your Docs: user-guide/styling-your-docs.md
+        - Configuration: user-guide/configuration.md
+        - Deploying Your Docs: user-guide/deploying-your-docs.md
+        - Custom Themes: user-guide/custom-themes.md
+        - Plugins: user-guide/plugins.md
+    - About:
+        - Release Notes: about/release-notes.md
+        - Contributing: about/contributing.md
+        - License: about/license.md
+
+extra_css:
+    - css/extra.css
+
+markdown_extensions:
+    - toc:
+        permalink: 
+    - admonition
+    - def_list
+    - mdx_gh_links:
+        user: khanhduy1407
+        repo: docums
+
+copyright: Copyright &copy; 2021 NKDuy.
+google_analytics: ['UA-215113700-1', 'khanhduy1407.github.io/docums']
+
+plugins:
+    - search
