@@ -79,8 +79,6 @@ A clone of the default theme used by the [Read the Docs] service, which offers
 the same restricted feature-set as its parent theme. Like its parent theme, only
 two levels of navigation are supported.
 
-![ReadTheDocs](../img/readthedocs.png)
-
 In addition to the default [theme configuration options], the `readthedocs`
 theme supports the following options:
 

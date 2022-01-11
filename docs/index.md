@@ -81,8 +81,6 @@ Install [Python] by downloading an installer appropriate for your system from
     Python added to your PATH if the installer offers such an option (it's
     normally off by default).
 
-    ![Add Python to PATH](img/win-py-install.png)
-
 [python.org]: https://www.python.org/downloads/
 
 #### Installing pip
@@ -164,8 +162,6 @@ cd my-project
 
 Take a moment to review the initial project that has been created for you.
 
-![The initial Docums layout](img/initial-layout.png)
-
 There's a single configuration file named `docums.yml`, and a folder named
 `docs` that will contain your documentation source files. Right now the `docs`
 folder just contains a single documentation page, named `index.md`.
@@ -185,9 +181,6 @@ INFO    -  Cleaning site directory
 ```
 
 Open up `http://127.0.0.1:8000/` in your browser, and you'll see the default
-home page being displayed:
-
-![The Docums live server](img/screenshot.png)
 
 The dev-server also supports auto-reloading, and will rebuild your documentation
 whenever anything in the configuration file, documentation directory, or theme
@@ -206,8 +199,6 @@ site_name: MkLorum
 
 Your browser should immediately reload, and you'll see your new site name take
 effect.
-
-![The site_name setting](img/site-name.png)
 
 ## Adding pages
 
