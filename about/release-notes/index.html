@@ -9,19 +9,14 @@
         <link rel="canonical" href="https://khanhduy1407.github.io/docums/about/release-notes/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
         <title>Release Notes - Docums</title>
-        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
         <link href="../../css/extra.css" rel="stylesheet">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
 
         <script src="../../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/django.min.js"></script>
@@ -38,95 +33,87 @@
     </head>
 
     <body>
-
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
-
-                <!-- Collapsed navigation -->
-                <div class="navbar-header">
-                    <!-- Expander button -->
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="../..">Docums</a>
-                </div>
+                <a class="navbar-brand" href="../..">Docums</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
                 <!-- Expanded navigation -->
-                <div class="navbar-collapse collapse">
+                <div id="navbar-collapse" class="navbar-collapse collapse">
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
-                            <li >
-                                <a href="../..">Home</a>
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
                             </li>
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li >
-    <a href="../../user-guide/writing-your-docs/">Writing Your Docs</a>
+<li>
+    <a href="../../user-guide/writing-your-docs/" class="dropdown-item">Writing Your Docs</a>
 </li>
                                     
-<li >
-    <a href="../../user-guide/styling-your-docs/">Styling Your Docs</a>
+<li>
+    <a href="../../user-guide/styling-your-docs/" class="dropdown-item">Styling Your Docs</a>
 </li>
                                     
-<li >
-    <a href="../../user-guide/configuration/">Configuration</a>
+<li>
+    <a href="../../user-guide/configuration/" class="dropdown-item">Configuration</a>
 </li>
                                     
-<li >
-    <a href="../../user-guide/deploying-your-docs/">Deploying Your Docs</a>
+<li>
+    <a href="../../user-guide/deploying-your-docs/" class="dropdown-item">Deploying Your Docs</a>
 </li>
                                     
-<li >
-    <a href="../../user-guide/custom-themes/">Custom Themes</a>
+<li>
+    <a href="../../user-guide/custom-themes/" class="dropdown-item">Custom Themes</a>
 </li>
                                     
-<li >
-    <a href="../../user-guide/plugins/">Plugins</a>
+<li>
+    <a href="../../user-guide/plugins/" class="dropdown-item">Plugins</a>
 </li>
                                 </ul>
                             </li>
                             <li class="dropdown active">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li class="active">
-    <a href="./">Release Notes</a>
+<li>
+    <a href="./" class="dropdown-item active">Release Notes</a>
 </li>
                                     
-<li >
-    <a href="../contributing/">Contributing</a>
+<li>
+    <a href="../contributing/" class="dropdown-item">Contributing</a>
 </li>
                                     
-<li >
-    <a href="../license/">License</a>
+<li>
+    <a href="../license/" class="dropdown-item">License</a>
 </li>
                                 </ul>
                             </li>
                         </ul>
 
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#docums_search_modal">
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#docums_search_modal">
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li >
-                                <a rel="next" href="../../user-guide/plugins/">
+                            <li class="nav-item">
+                                <a rel="prev" href="../../user-guide/plugins/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
-                            <li >
-                                <a rel="prev" href="../contributing/">
+                            <li class="nav-item">
+                                <a rel="next" href="../contributing/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
-                            <li>
-                                <a href="https://github.com/khanhduy1407/docums/"><i class="fa fa-github"></i> GitHub</a>
+                            <li class="nav-item">
+                                <a href="https://github.com/khanhduy1407/docums/" class="nav-link"><i class="fa fa-github"></i> GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -134,14 +121,38 @@
         </div>
 
         <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#release-notes">Release Notes</a></li>
-            <li><a href="#upgrading">Upgrading</a></li>
-            <li><a href="#version-1000">Version 1.0.0.0</a></li>
-    </ul>
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+                
+            <li class="nav-item" data-level="1"><a href="#release-notes" class="nav-link">Release Notes</a>
+                <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#upgrading" class="nav-link">Upgrading</a>
+                <ul class="nav flex-column">
+                </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#version-110" class="nav-link">Version 1.1.0</a>
+                <ul class="nav flex-column">
+                </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#version-1000" class="nav-link">Version 1.0.0.0</a>
+                <ul class="nav flex-column">
+                </ul>
+            </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
 </div></div>
-                <div class="col-md-9" role="main">
+                    <div class="col-md-9" role="main">
 
 <h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link"></a></h1>
 <hr />
@@ -153,6 +164,22 @@
 <pre><code>$ docums --version
 docums, version 1.0.0.0 from /path/to/docums (Python 3.6)
 </code></pre>
+<h2 id="version-110">Version 1.1.0<a class="headerlink" href="#version-110" title="Permanent link"></a></h2>
+<ul>
+<li>Bugfix: Normalize IP addresses and change unsupported address error to a
+  warning</li>
+<li>Bugfix: Allow compressed sitemap to be deterministic by supporting the
+  <code>SOURCE_DATE_EPOCH</code> environment variable</li>
+<li>Bugfix: Use <code>README.md</code> as <code>index.html</code> even if <code>use_directory_urls</code> is false</li>
+<li>Bugfix: Ignore links which start with a backslash</li>
+<li>Bugfix: Pass <code>builder</code> to the <code>on_serve</code> event so that it can be passed to
+  <code>server.watch</code> by plugins</li>
+<li>Bugfix: Use <code>lunr[languages]==0.5.8</code> to avoid <code>nltk</code> incompatibilities</li>
+<li>Bugfix: Ensure wheel is Python 3 only</li>
+<li>Bugfix: Clean up <code>dev_addr</code> validation and disallow <code>0.0.0.0</code></li>
+<li>Add support for <code>min_search_length</code> parameter for search plugin</li>
+<li>Bugfix: <code>readthedocs</code> theme <code>code</code> colors</li>
+</ul>
 <h2 id="version-1000">Version 1.0.0.0<a class="headerlink" href="#version-1000" title="Permanent link"></a></h2>
 <ul>
 <li>Bugfix: Ignore absolute links in Markdown</li>
@@ -164,6 +191,7 @@ docums, version 1.0.0.0 from /path/to/docums (Python 3.6)
 <li>Bugfix: Exclude <code>README.md</code> if <code>index.md</code> is present</li>
 <li>Bugfix: Fix <code>readthedocs</code> theme navigation bug with homepage</li>
 </ul></div>
+            </div>
         </div>
 
         <footer class="col-md-12">
@@ -178,21 +206,21 @@ docums, version 1.0.0.0 from /path/to/docums (Python 3.6)
         <script src="../../js/base.js" defer></script>
         <script src="../../search/main.js" defer></script>
 
-        <div class="modal" id="docums_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
+        <div class="modal" id="docums_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
             </div>
             <div class="modal-body">
                 <p>
                     From here you can search these documents. Enter
                     your search terms below.
                 </p>
-                <form role="form">
+                <form>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="docums-search-query" title="Type search term here">
+                        <input type="search" class="form-control" placeholder="Search..." id="docums-search-query" title="Type search term here">
                     </div>
                 </form>
                 <div id="docums-search-results"></div>
@@ -201,12 +229,12 @@ docums, version 1.0.0.0 from /path/to/docums (Python 3.6)
             </div>
         </div>
     </div>
-</div><div class="modal" id="docums_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+</div><div class="modal" id="docums_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
             </div>
             <div class="modal-body">
               <table class="table">
