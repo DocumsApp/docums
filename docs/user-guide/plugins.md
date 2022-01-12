@@ -14,7 +14,8 @@ appropriate package name and install it using `pip`:
     pip install docums-foo-plugin
 
 Once a plugin has been successfully installed, it is ready to use. It just needs
-to be [enabled](#using-plugins) in the configuration file.
+to be [enabled](#using-plugins) in the configuration file. The [Docums Plugins]
+wiki page has a growing list of plugins that you can install and use.
 
 ## Using Plugins
 
@@ -76,7 +77,7 @@ All `BasePlugin` subclasses contain the following attributes:
 
         class MyPlugin(docums.plugins.BasePlugin):
             config_scheme = (
-                ('foo', docums.config.config_options.Type(docums.utils.string_types, default='a default value')),
+                ('foo', docums.config.config_options.Type(str, default='a default value')),
                 ('bar', docums.config.config_options.Type(int, default=0)),
                 ('baz', docums.config.config_options.Type(bool, default=True))
             )
@@ -154,6 +155,7 @@ entire site.
     Parameters:
     : __server:__ `livereload.Server` instance
     : __config:__ global configuration object
+    : __builder:__ a callable which gets passed to each call to `server.watch`
 
     Returns:
     : `livereload.Server` instance
@@ -214,7 +216,7 @@ entire site.
     Parameters:
     : __env:__ global Jinja environment
     : __config:__ global configuration object
-    : __site_navigation:__ global navigation object
+    : __files:__ global files collection
 
     Returns:
     : global Jinja Environment
@@ -290,7 +292,7 @@ page events are called after the [post_template] event and before the
     Parameters:
     : __page:__ `docums.nav.Page` instance
     : __config:__ global configuration object
-    : __site_navigation:__ global navigation object
+    : __files:__ global files collection
 
     Returns:
     : `docums.nav.Page` instance
@@ -318,7 +320,7 @@ page events are called after the [post_template] event and before the
     : __markdown:__ Markdown source text of page as string
     : __page:__ `docums.nav.Page` instance
     : __config:__ global configuration object
-    : __site_navigation:__ global navigation object
+    : __files:__ global files collection
 
     Returns:
     : Markdown source text of page as string
@@ -333,7 +335,7 @@ page events are called after the [post_template] event and before the
     : __html:__ HTML rendered from Markdown source as string
     : __page:__ `docums.nav.Page` instance
     : __config:__ global configuration object
-    : __site_navigation:__ global navigation object
+    : __files:__ global files collection
 
     Returns:
     : HTML rendered from Markdown source as string
@@ -347,23 +349,22 @@ page events are called after the [post_template] event and before the
     : __context__: dict of template context variables
     : __page:__ `docums.nav.Page` instance
     : __config:__ global configuration object
-    : __site_navigation:__ global navigation object
+    : __files:__ global files collection
 
     Returns:
     : dict of template context variables
 
 ##### on_post_page
 
-:   The `post_template` event is called after the template is rendered, but
+:   The `post_page` event is called after the template is rendered, but
     before it is written to disc and can be used to alter the output of the
     page. If an empty string is returned, the page is skipped and nothing is
     written to disc.
 
     Parameters:
-    : __output_content:__ output of rendered template as string
+    : __output:__ output of rendered template as string
     : __page:__ `docums.nav.Page` instance
     : __config:__ global configuration object
-    : __site_navigation:__ global navigation object
 
     Returns:
     : output of rendered template as string
@@ -413,3 +414,4 @@ tell Docums to use if via the config.
 [post_template]: #on_post_template
 [static_templates]: configuration.md#static_templates
 [Template Events]: #template-events
+[Docums Plugins]: https://github.com/khanhduy1407/docums/wiki/Plugins

@@ -1,2 +1,9 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+docums/contrib/search/lunr-language/** linguist-vendored
+docums/themes/docums/js/** linguist-vendored
+docums/themes/docums/js/base.js linguist-vendored=false
+docums/themes/docums/css/** linguist-vendored
+docums/themes/docums/css/base.css linguist-vendored=false
+docums/themes/readthedocs/js/** linguist-vendored
+docums/themes/readthedocs/js/theme.js linguist-vendored=false
+docums/themes/readthedocs/css/** linguist-vendored
+docums/themes/readthedocs/css/theme_extra.css linguist-vendored=false

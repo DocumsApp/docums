@@ -1,10 +1,8 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
 import fnmatch
 import os
 import logging
 from functools import cmp_to_key
+from urllib.parse import quote as urlquote
 
 from docums import utils
 
@@ -13,7 +11,7 @@ log = logging.getLogger(__name__)
 log.addFilter(utils.warning_filter)
 
 
-class Files(object):
+class Files:
     """ A collection of File objects. """
     def __init__(self, files):
         self._files = files
@@ -66,21 +64,26 @@ class Files(object):
     def add_files_from_theme(self, env, config):
         """ Retrieve static files from Jinja environment and add to collection. """
         def filter(name):
-            patterns = ['.*', '*.py', '*.pyc', '*.html', 'docums_theme.yml']
+            # '.*' filters dot files/dirs at root level whereas '*/.*' filters nested levels
+            patterns = ['.*', '*/.*', '*.py', '*.pyc', '*.html', '*readme*', 'mkdocs_theme.yml']
+            patterns.extend('*{}'.format(x) for x in utils.markdown_extensions)
             patterns.extend(config['theme'].static_templates)
             for pattern in patterns:
-                if fnmatch.fnmatch(name, pattern):
+                if fnmatch.fnmatch(name.lower(), pattern):
                     return False
             return True
         for path in env.list_templates(filter_func=filter):
-            for dir in config['theme'].dirs:
-                # Find the first theme dir which contains path
-                if os.path.isfile(os.path.join(dir, path)):
-                    self.append(File(path, dir, config['site_dir'], config['use_directory_urls']))
-                    break
+            # Theme files do not override docs_dir files
+            path = os.path.normpath(path)
+            if path not in self:
+                for dir in config['theme'].dirs:
+                    # Find the first theme dir which contains path
+                    if os.path.isfile(os.path.join(dir, path)):
+                        self.append(File(path, dir, config['site_dir'], config['use_directory_urls']))
+                        break
 
 
-class File(object):
+class File:
     """
     A Docums File object.
 
@@ -124,7 +127,7 @@ class File(object):
     def __eq__(self, other):
 
         def sub_dict(d):
-            return dict((key, value) for key, value in d.items() if key in ['src_path', 'abs_src_path', 'url'])
+            return {key: value for key, value in d.items() if key in ['src_path', 'abs_src_path', 'url']}
 
         return (isinstance(other, self.__class__) and sub_dict(self.__dict__) == sub_dict(other.__dict__))
 
@@ -140,18 +143,14 @@ class File(object):
     def _get_dest_path(self, use_directory_urls):
         """ Return destination path based on source path. """
         if self.is_documentation_page():
-            if use_directory_urls:
-                parent, filename = os.path.split(self.src_path)
-                if self.name == 'index':
-                    # index.md or README.md => index.html
-                    return os.path.join(parent, 'index.html')
-                else:
-                    # foo.md => foo/index.html
-                    return os.path.join(parent, self.name, 'index.html')
-            else:
+            parent, filename = os.path.split(self.src_path)
+            if not use_directory_urls or self.name == 'index':
+                # index.md or README.md => index.html
                 # foo.md => foo.html
-                root, ext = os.path.splitext(self.src_path)
-                return root + '.html'
+                return os.path.join(parent, self.name + '.html')
+            else:
+                # foo.md => foo/index.html
+                return os.path.join(parent, self.name, 'index.html')
         return self.src_path
 
     def _get_url(self, use_directory_urls):
@@ -163,7 +162,7 @@ class File(object):
                 url = '.'
             else:
                 url = dirname + '/'
-        return url
+        return urlquote(url)
 
     def url_relative_to(self, other):
         """ Return url for file relative to other file. """
@@ -233,8 +232,9 @@ def get_files(config):
             # Skip any excluded files
             if _filter_paths(basename=filename, path=path, is_dir=False, exclude=exclude):
                 continue
-            # Skip README.md is an index file also exists in dir
+            # Skip README.md if an index file also exists in dir
             if filename.lower() == 'readme.md' and 'index.md' in filenames:
+                log.warning("Both index.md and readme.md found. Skipping readme.md from {}".format(source_dir))
                 continue
             files.append(File(path, config['docs_dir'], config['site_dir'], config['use_directory_urls']))
 

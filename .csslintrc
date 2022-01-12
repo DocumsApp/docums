@@ -1,4 +1,4 @@
---exclude-list = docums/themes/docums/css/bootstrap-custom.min.css,
+--exclude-list = docums/themes/docums/css/bootstrap.min.css,
                  docums/themes/readthedocs/css/bootstrap-custom.min.css,
                  docums/themes/docums/css/font-awesome.min.css,
                  docums/themes/readthedocs/css/font-awesome-4.5.0.css,

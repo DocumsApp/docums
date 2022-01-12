@@ -1,12 +1,7 @@
-# coding: utf-8
-
-from __future__ import unicode_literals
-from datetime import datetime
-from calendar import timegm
 import logging
 import os
 import gzip
-import io
+from urllib.parse import urlparse
 
 from jinja2.exceptions import TemplateNotFound
 import jinja2
@@ -17,7 +12,7 @@ from docums.structure.nav import get_navigation
 import docums
 
 
-class DuplicateFilter(object):
+class DuplicateFilter:
     ''' Avoid logging duplicate messages. '''
     def __init__(self):
         self.msgs = set()
@@ -45,10 +40,6 @@ def get_context(nav, files, config, page=None, base_url=''):
 
     extra_css = utils.create_media_urls(config['extra_css'], page, base_url)
 
-    # Support SOURCE_DATE_EPOCH environment variable for "reproducible" builds.
-    # See https://reproducible-builds.org/specs/source-date-epoch/
-    timestamp = int(os.environ.get('SOURCE_DATE_EPOCH', timegm(datetime.utcnow().utctimetuple())))
-
     return {
         'nav': nav,
         'pages': files.documentation_pages(),
@@ -59,7 +50,7 @@ def get_context(nav, files, config, page=None, base_url=''):
         'extra_javascript': extra_javascript,
 
         'docums_version': docums.__version__,
-        'build_date_utc': datetime.utcfromtimestamp(timestamp),
+        'build_date_utc': utils.get_build_datetime(),
 
         'config': config,
         'page': page,
@@ -81,7 +72,7 @@ def _build_template(name, template, files, config, nav):
         # possability that the docs root might be different than the server root.
         # However, if site_url is not set, assume the docs root and server root
         # are the same.
-        base_url = utils.urlparse(config['site_url'] or '/').path
+        base_url = urlparse(config['site_url'] or '/').path
     else:
         base_url = utils.get_relative_url('.', name)
 
@@ -110,7 +101,7 @@ def _build_theme_template(template_name, env, files, config, nav):
     try:
         template = env.get_template(template_name)
     except TemplateNotFound:
-        log.warn("Template skipped: '{}' not found in theme directories.".format(template_name))
+        log.warning("Template skipped: '{}' not found in theme directories.".format(template_name))
         return
 
     output = _build_template(template_name, template, files, config, nav)
@@ -121,8 +112,11 @@ def _build_theme_template(template_name, env, files, config, nav):
 
         if template_name == 'sitemap.xml':
             log.debug("Gzipping template: %s", template_name)
-            with gzip.open('{}.gz'.format(output_path), 'wb') as f:
-                f.write(output.encode('utf-8'))
+            gz_filename = '{}.gz'.format(output_path)
+            with open(gz_filename, 'wb') as f:
+                timestamp = utils.get_build_timestamp()
+                with gzip.GzipFile(fileobj=f, filename=gz_filename, mode='wb', mtime=timestamp) as gz_buf:
+                    gz_buf.write(output.encode('utf-8'))
     else:
         log.info("Template skipped: '{}' generated empty output.".format(template_name))
 
@@ -134,14 +128,14 @@ def _build_extra_template(template_name, files, config, nav):
 
     file = files.get_file_from_path(template_name)
     if file is None:
-        log.warn("Template skipped: '{}' not found in docs_dir.".format(template_name))
+        log.warning("Template skipped: '{}' not found in docs_dir.".format(template_name))
         return
 
     try:
-        with io.open(file.abs_src_path, 'r', encoding='utf-8', errors='strict') as f:
+        with open(file.abs_src_path, 'r', encoding='utf-8', errors='strict') as f:
             template = jinja2.Template(f.read())
     except Exception as e:
-        log.warn("Error reading template '{}': {}".format(template_name, e))
+        log.warning("Error reading template '{}': {}".format(template_name, e))
         return
 
     output = _build_template(template_name, template, files, config, nav)
@@ -234,12 +228,14 @@ def _build_page(page, config, files, nav, env, dirty=False):
 
 def build(config, live_server=False, dirty=False):
     """ Perform a full site build. """
+    from time import time
+    start = time()
 
     # Run `config` plugin events.
     config = config['plugins'].run_event('config', config)
 
     # Run `pre_build` plugin events.
-    config['plugins'].run_event('pre_build', config)
+    config['plugins'].run_event('pre_build', config=config)
 
     if not dirty:
         log.info("Cleaning site directory")
@@ -270,6 +266,7 @@ def build(config, live_server=False, dirty=False):
 
     log.debug("Reading markdown pages.")
     for file in files.documentation_pages():
+        log.debug("Reading: " + file.src_path)
         _populate_page(file.page, config, files, dirty)
 
     # Run `env` plugin events.
@@ -294,10 +291,12 @@ def build(config, live_server=False, dirty=False):
         _build_page(file.page, config, files, nav, env, dirty)
 
     # Run `post_build` plugin events.
-    config['plugins'].run_event('post_build', config)
+    config['plugins'].run_event('post_build', config=config)
 
     if config['strict'] and utils.warning_filter.count:
         raise SystemExit('\nExited with {} warnings in strict mode.'.format(utils.warning_filter.count))
+
+    log.info('Documentation built in %.2f seconds', time() - start)
 
 
 def site_directory_contains_stale_files(site_directory):

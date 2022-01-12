@@ -49,9 +49,11 @@ to the git repository.
 
 ## Running the tests
 
-To run the tests, it is recommended that you use [Tox]. This just needs
-to be pip installed and then the test suite can be ran for Docums but running
-the command `tox` in the root of your Docums repository.
+To run the tests, it is recommended that you use [tox].
+
+Install Tox using [pip] by running the command `pip install tox`.
+Then the test suite can be run for Docums by running the command `tox` in the
+root of your Docums repository.
 
 It will attempt to run the tests against all of the Python versions we
 support. So don't be concerned if you are missing some and they fail. The rest
@@ -63,7 +65,8 @@ Once you are happy with your changes or you are ready for some feedback, push
 it to your fork and send a pull request. For a change to be accepted it will
 most likely need to have tests and documentation if it is a new feature.
 
-[virtualenv]: https://virtualenv.pypa.io/en/latest/userguide.html
+[virtualenv]: https://virtualenv.pypa.io/en/latest/user_guide.html
+[pip]: https://pip.pypa.io/en/stable/
 [tox]: https://tox.readthedocs.io/en/latest/
 [travis]: https://travis-ci.org/repositories
 [PyPA Code of Conduct]: https://www.pypa.io/en/latest/code-of-conduct/

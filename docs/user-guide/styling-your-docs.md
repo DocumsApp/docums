@@ -25,8 +25,7 @@ the [Customizing a Theme][customize] section below.
 ### docums
 
 The default theme, which was built as a custom [Bootstrap] theme, supports most
-every feature of Docums. It only officially supports two levels in the
-navigation.
+every feature of Docums.
 
 In addition to the default [theme configuration options], the `docums` theme
 supports the following options:
@@ -59,7 +58,7 @@ supports the following options:
                 search: 83   # s
 
     All values much be numeric key codes. It is best to use keys which are
-    available on all keyboards. You may use <http://keycode.info/> to determine
+    available on all keyboards. You may use <https://keycode.info/> to determine
     the key code for a given key.
 
     * __`help`__: Display a help modal which lists the keyboard shortcuts.
@@ -70,6 +69,17 @@ supports the following options:
     * __`previous`__: Navigate to the "previous" page. Default: `80` (p)
 
     * __`search`__: Display the search modal. Default: `83` (s)
+
+* __`navigation_depth`__: The maximum depth of the navigation tree in the
+  sidebar. Default: `2`.
+
+* __`nav_style`__: This adjusts the visual style for the top navigation bar; by
+  default, this is set to `primary` (the default), but it can also be set to
+  `dark` or `light`.
+
+        theme:
+            name: docums
+            nav_style: dark
 
 [styles]: https://highlightjs.org/static/demo/
 
@@ -94,6 +104,27 @@ theme supports the following options:
             hljs_languages:
                 - yaml
                 - rust
+
+* __`include_homepage_in_sidebar`__: Lists the homepage in the sidebar menu. As
+  Docums requires that the homepage be listed in the `nav` configuration
+  option, this setting allows the homepage to be included or excluded from
+  the sidebar. Note that the site name/logo always links to the homepage.
+  Default: `True`.
+
+* __`prev_next_buttons_location`__: One of `bottom`, `top`, `both` , or `none`.
+  Displays the “Next” and “Previous” buttons accordingly. Default: `bottom`.
+
+* __`navigation_depth`__: The maximum depth of the navigation tree in the
+  sidebar. Default: `4`.
+
+* __`collapse_navigation`__: Only include the page section headers in the
+  sidebar for the current page. Default: `True`.
+
+* __`titles_only`__: Only include page titles in the sidebar, excluding all
+  section headers for all pages. Default: `False`.
+
+* __`sticky_navigation`__: If True, causes the sidebar to scroll with the main
+  page content as you scroll the page. Default: `True`.
 
 ### Third Party Themes
 
@@ -241,13 +272,13 @@ template would contain the following:
 ```django
 {% extends "base.html" %}
 
-{% block title %}
+{% block htmltitle %}
 <title>Custom title goes here</title>
 {% endblock %}
 ```
 
-In the above example, the title block defined in your custom `main.html` file
-will be used in place of the default title block defined in the parent theme.
+In the above example, the `htmltitle` block defined in your custom `main.html` file
+will be used in place of the default `htmltitle` block defined in the parent theme.
 You may re-define as many blocks as you desire, as long as those blocks are
 defined in the parent. For example, you could replace the Google Analytics
 script with one for a different service or replace the search feature with your
@@ -264,7 +295,7 @@ following blocks:
 * `extrahead`: An empty block in the `<head>` to insert custom tags/scripts/etc.
 * `site_name`: Contains the site name in the navigation bar.
 * `site_nav`: Contains the site navigation in the navigation bar.
-* `search_box`: Contains the search box in the navigation bar.
+* `search_button`: Contains the search box in the navigation bar.
 * `next_prev`: Contains the next and previous buttons in the navigation bar.
 * `repo`: Contains the repository link in the navigation bar.
 * `content`: Contains the page content and table of contents for the page.

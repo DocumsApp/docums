@@ -58,10 +58,24 @@ theme:
 
     For more specific information, see [styling your docs].
 
+!!! Warning
+
+    A theme's [configuration] defined in a `docums_theme.yml` file is not loaded
+    from `theme.custom_dir`. When an entire theme exists in `theme.custom_dir`
+    and `theme.name` is set to `null`, then the entire theme configuration must
+    be defined in the [theme] configuration option in the `docums.yml` file.
+
+    However, when a theme is [packaged] up for distribution, and loaded using
+    the `theme.name` configuration option, then a `docums_theme.yml` file
+    is required for the theme.
+
 [styling your docs]: ./styling-your-docs.md#using-the-theme-custom_dir
 [custom_dir]: ./configuration.md#custom_dir
 [name]: ./configuration.md#name
 [docs_dir]:./configuration.md#docs_dir
+[configuration]: #theme-configuration
+[packaged]: #packaging-themes
+[theme]: ./configuration.md#theme
 
 ## Basic theme
 
@@ -102,6 +116,47 @@ with one of the [built-in themes] and modify it accordingly.
 [template inheritance]: http://jinja.pocoo.org/docs/dev/templates/#template-inheritance
 [theme_dir]: ./styling-your-docs.md#using-the-theme_dir
 [blocks]: ./styling-your-docs.md#overriding-template-blocks
+
+## Theme Files
+
+There are various files which a theme treats special in some way. Any other
+files are simply copied from the theme directory to the same path in the
+`site_dir` when the site it built. For example image and CSS files have no
+special significance and are copied as-is. Note, however, that if the user
+provides a file with the same path in their `docs_dir`, then the user's file
+will replace the theme file.
+
+### Template Files
+
+Any files with the `.html` extension are considered to be template files and are
+not copied from the theme directory or any subdirectories. Also, any files
+listed in [static_templates] are treated as templates regardless of their file
+extension.
+
+[static_templates]: #static_templates
+
+### Theme Meta Files
+
+The various files required for packaging a theme are also ignored. Specifically,
+the `docums_theme.yml` configuration file and any Python files.
+
+### Dot Files
+
+Theme authors can explicitly force Docums to ignore files by starting a file or
+directory name with a dot. Any of the following files would be ignored:
+
+```text
+.ignored.txt
+.ignored/file.txt
+foo/.ignored.txt
+foo/.ignored/file.txt
+```
+
+### Documentation Files
+
+All documentation files are ignored. Specifically, any Markdown files (using any
+of the file extensions supported by Docums). Additionally, any README files
+which may exist in the theme directories are ignored.
 
 ## Template Variables
 
@@ -655,9 +710,9 @@ Bootswatch theme].
     can be contained in the `custom_dir`. If you have created a "one-off theme,"
     that should be sufficient. However, if you intend to distribute your theme
     for others to use, packaging the theme has some advantages. By packaging
-    your theme, your users can more easily install it and they can then take
-    advantage of the [custom_dir] to make tweaks to your theme to better suit
-    their needs.
+    your theme, your users can more easily install it, they can rely on a default
+    [configuration] being defined, and they can then take advantage of the
+    [custom_dir] to make tweaks to your theme to better suit their needs.
 
 [Python packaging]: https://packaging.python.org/en/latest/
 [Docums Bootstrap theme]: https://khanhduy1407.github.io/docums-bootstrap/
@@ -742,7 +797,8 @@ A packaged theme is required to include a configuration file named
 `docums_theme.yml` which is placed in the root of your template files. The file
 should contain default configuration options for the theme. However, if the
 theme offers no configuration options, the file is still required and can be
-left blank.
+left blank. A theme which is not packaged does not need a `docums_theme.yml`
+file as that file is not loaded from `theme.custom_dir`.
 
 The theme author is free to define any arbitrary options deemed necessary and
 those options will be made available in the templates to control behavior.

@@ -165,14 +165,12 @@ This option can be overridden by a command line option in `gh-deploy`.
 ### nav
 
 This setting is used to determine the format and layout of the global navigation
-for the site. For example, the following would create "Introduction", "User
-Guide" and "About" navigation items.
+for the site. A minimal navigation configuration could look like this:
 
 ```yaml
 nav:
-    - 'Introduction': 'index.md'
-    - 'User Guide': 'user-guide.md'
-    - 'About': 'about.md'
+    - 'index.md'
+    - 'about.md'
 ```
 
 All paths must be relative to the `docums.yml` configuration file. See the
@@ -182,13 +180,14 @@ including how to create sub-sections.
 Navigation items may also include links to external sites. While titles are
 optional for internal links, they are required for external links. An external
 link may be a full URL or a relative URL. Any path which is not found in the
-files is assumed to be an external link.
+files is assumed to be an external link. See the section about [Meta-Data] on
+how Docums determines the page title of a document.
 
 ```yaml
 nav:
-    - Home: index.md
-    - User Guide: user-guide.md
-    - Bug Tracker: https://example.com/
+    - Introduction: 'index.md'
+    - 'about.md'
+    - 'Issue Tracker': 'https://example.com/'
 ```
 
 In the above example, the first two items point to local files while the third
@@ -196,15 +195,15 @@ points to an external site.
 
 However, sometimes the Docums site is hosted in a subdirectory of a project's
 site and you may want to link to other parts of the same site without including
-the full domain. In that case, you may use and appropriate relative URL.
+the full domain. In that case, you may use an appropriate relative URL.
 
 ```yaml
 site_url: https://example.com/foo/
 
 nav:
-    - Home: ../
-    - User Guide: user-guide.md
-    - Bug Tracker: /bugs/
+    - Home: '../'
+    - 'User Guide': 'user-guide.md'
+    - 'Bug Tracker': '/bugs/'
 ```
 
 In the above example, two different styles of external links are used. First
@@ -217,7 +216,7 @@ server root and effectively points to `https://example.com/bugs/`. Of course, th
 
 **default**: By default `nav` will contain an alphanumerically sorted, nested
 list of all the Markdown files found within the `docs_dir` and its
-sub-directories. If none are found it will be `[]` (an empty list).
+sub-directories. Index files will always be listed first within a sub-section.
 
 ## Build directories
 
@@ -389,7 +388,7 @@ Determines the address used when running `docums serve`. Must be of the format
 `IP:PORT`.
 
 Allows a custom default to be set without the need to pass it through the
-`--dev_addr` option every time the `docums serve` command is called.
+`--dev-addr` option every time the `docums serve` command is called.
 
 **default**: `'127.0.0.1:8000'`
 
@@ -503,21 +502,38 @@ plugins:
 
   **default**: `'[\s\-]+'`
 
+##### **min_search_length**
+
+An integer value that defines the minimum length for a search query. By default
+searches shorter than 3 chars in length are ignored as search result quality with
+short search terms is poor. However, for some use cases (such as documentation
+about Message Queues which might generate searches for 'MQ') it may be preferable
+to set a shorter limit.
+
+```yaml
+plugins:
+    - search:
+        min_search_length: 2
+```
+
+**default**: 3
+
 ##### **lang**
 
 A list of languages to use when building the search index as identified by their
 [ISO 639-1] language codes. With [Lunr Languages], the following languages are
 supported:
 
+* `ar`: Arabic
 * `da`: Danish
-* `du`: Dutch
+* `nl`: Dutch
 * `en`: English
 * `fi`: Finnish
 * `fr`: French
 * `de`: German
 * `hu`: Hungarian
 * `it`: Italian
-* `jp`: Japanese
+* `ja`: Japanese
 * `no`: Norwegian
 * `pt`: Portuguese
 * `ro`: Romanian
@@ -526,6 +542,7 @@ supported:
 * `sv`: Swedish
 * `th`: Thai
 * `tr`: Turkish
+* `vi`: Vietnamese
 
 You may [contribute additional languages].
 
@@ -546,13 +563,23 @@ You may [contribute additional languages].
 
 ##### **prebuild_index**
 
- Optionally generates a pre-built index of all pages, which provides some
- performance improvements for larger sites. Before enabling, check that the
- theme you are using explicitly supports using a prebuilt index (the builtin
- themes do). The pre-build script requires that [Node.js] be installed and the
- command `node` be on the system path. If this feature is enabled and fails for
- any reason, a warning is issued. You may use the `--strict` flag when building
- to cause such a failure to raise an error instead.
+Optionally generates a pre-built index of all pages, which provides some
+performance improvements for larger sites. Before enabling, check that the
+theme you are using explicitly supports using a prebuilt index (the builtin
+themes do).
+
+There are two options for prebuilding the index:
+
+Using [Node.js] setting `prebuild_index` to `True` or `node`. This option
+requires that Node.js be installed and the command `node` be on the system
+path. If this feature is enabled and fails for any reason, a warning is issued.
+You may use the `--strict` flag when building to cause such a failure to raise
+an error instead.
+
+Using [Lunr.py] setting `prebuild_index` to `python`. Lunr.py is installed
+as part of docums and guarantees compatibility with Lunr.js even on languages
+other than english. If you find substantial inconsistencies or problems please
+report it on [Lunr.py's issues] and fall back to the Node.js version.
 
 !!! Note
 
@@ -562,7 +589,7 @@ You may [contribute additional languages].
     the bandwidth increase is relatively small and your users will notice a
     significant improvement in search performance.
 
- **default**: `False`
+**default**: `False`
 
 [custom themes]: custom-themes.md
 [variables that are available]: custom-themes.md#template-variables
@@ -581,3 +608,5 @@ You may [contribute additional languages].
 [Lunr Languages]: https://github.com/MihaiValentin/lunr-languages#lunr-languages-----
 [contribute additional languages]: https://github.com/MihaiValentin/lunr-languages/blob/master/CONTRIBUTING.md
 [Node.js]: https://nodejs.org/
+[Lunr.py]: http://lunr.readthedocs.io/
+[Lunr.py's issues]: https://github.com/yeraydiazdiaz/lunr.py/issues

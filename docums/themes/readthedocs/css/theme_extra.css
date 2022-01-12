@@ -1,54 +1,8 @@
 /*
- * Sphinx doesn't have support for section dividers like we do in
- * Docums, this styles the section titles in the nav
- */
-.wy-menu-vertical span {
-    line-height: 18px;
-    padding: 0.4045em 1.618em;
-    display: block;
-    position: relative;
-    font-size: 90%;
-    color: #838383;
-}
-
-.wy-menu-vertical .subnav a {
-    padding: 0.4045em 2.427em;
-}
-
-/*
- * Long navigations run off the bottom of the screen as the nav
- * area doesn't scroll.
- */
-.wy-nav-side {
-    height: calc(100% - 45px);
-    overflow-y: auto;
-    min-height: 0;
-}
-
-.rst-versions{
-    border-top: 0;
-    height: 45px;
-}
-
-@media screen and (max-width: 768px) {
-    .wy-nav-side {
-        height: 100%;
-    }
-}
-
-/*
- * readthedocs theme hides nav items when the window height is
- * too small to contain them.
- */
-.wy-menu-vertical ul {
-  margin-bottom: 2em;
-}
-
-/*
  * Wrap inline code samples otherwise they shoot of the side and
  * can't be read at all.
  */
-code {
+.rst-content code {
     white-space: pre-wrap;
     word-wrap: break-word;
     padding: 2px 5px;
@@ -58,12 +12,24 @@ code {
  * Make code blocks display as blocks and give them the appropriate
  * font size and padding.
  */
-pre code {
+.rst-content pre code {
   white-space: pre;
   word-wrap: normal;
   display: block;
   padding: 12px;
   font-size: 12px;
+}
+
+/**
+ * Fix code colors
+ */
+.rst-content code {
+    color: #E74C3C;
+}
+
+.rst-content pre code {
+    color: #000;
+    background: #f8f8f8;
 }
 
 /*
@@ -94,7 +60,7 @@ pre .cs, pre .c {
  * samples. Without and highlighting styles attached the
  * formatting is broken.
  */
-.no-highlight {
+.rst-content .no-highlight {
   display: block;
   padding: 0.5em;
   color: #333;
@@ -125,25 +91,10 @@ form .search-query {
     border-color: #D1D4D5;
 }
 
-.wy-menu-vertical li ul {
-    display: inherit;
-}
-
-.wy-menu-vertical li ul.subnav ul.subnav{
-    padding-left: 1em;
-}
-
-.wy-menu-vertical .subnav li.current > a {
-    padding-left: 2.42em;
-}
-.wy-menu-vertical .subnav li.current > ul li a {
-    padding-left: 3.23em;
-}
-
 /*
  * Improve inline code blocks within admonitions.
  */
- .admonition code {
+.rst-content .admonition code {
   color: #404040;
   border: 1px solid #c7c9cb;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -166,4 +117,3 @@ td, th {
    border: 1px solid #e1e4e5 !important; /* csslint allow: important */
    border-collapse: collapse;
 }
-
