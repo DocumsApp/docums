@@ -4,19 +4,57 @@ import os
 import sys
 import logging
 import click
+import textwrap
+import shutil
 
-# TODO: Remove this check at some point in the future.
-# (also remove flake8's 'ignore E402' comments below)
-if sys.version_info[0] < 3:  # pragma: no cover
-    raise ImportError('A recent version of Python 3 is required.')
+from docums import __version__
+from docums import utils
+from docums import config
+from docums.commands import build, gh_deploy, new, serve
 
-from docums import __version__                            # noqa: E402
-from docums import utils                                  # noqa: E402
-from docums import exceptions                             # noqa: E402
-from docums import config                                 # noqa: E402
-from docums.commands import build, gh_deploy, new, serve  # noqa: E402
+
+if sys.platform.startswith("win"):
+    try:
+        import colorama
+    except ImportError:
+        pass
+    else:
+        colorama.init()
 
 log = logging.getLogger(__name__)
+
+
+class ColorFormatter(logging.Formatter):
+    colors = {
+        'CRITICAL': 'red',
+        'ERROR': 'red',
+        'WARNING': 'yellow',
+        'DEBUG': 'blue'
+    }
+
+    text_wrapper = textwrap.TextWrapper(
+        width=shutil.get_terminal_size(fallback=(0, 0)).columns,
+        replace_whitespace=False,
+        break_long_words=False,
+        break_on_hyphens=False,
+        initial_indent=' '*12,
+        subsequent_indent=' '*12
+    )
+
+    def format(self, record):
+        message = super().format(record)
+        prefix = f'{record.levelname:<8} -  '
+        if record.levelname in self.colors:
+            prefix = click.style(prefix, fg=self.colors[record.levelname])
+        if self.text_wrapper.width:
+            # Only wrap text if a terminal width was detected
+            msg = '\n'.join(
+                self.text_wrapper.fill(line)
+                for line in message.splitlines()
+            )
+            # Prepend prefix after wrapping so that color codes don't affect length
+            return prefix + msg[12:]
+        return prefix + message
 
 
 class State:
@@ -24,13 +62,15 @@ class State:
 
     def __init__(self, log_name='docums', level=logging.INFO):
         self.logger = logging.getLogger(log_name)
+        # Don't restrict level on logger; use handler
+        self.logger.setLevel(1)
         self.logger.propagate = False
-        stream = logging.StreamHandler()
-        formatter = logging.Formatter("%(levelname)-7s -  %(message)s ")
-        stream.setFormatter(formatter)
-        self.logger.addHandler(stream)
 
-        self.logger.setLevel(level)
+        self.stream = logging.StreamHandler()
+        self.stream.setFormatter(ColorFormatter())
+        self.stream.setLevel(level)
+        self.stream.name = 'DocumsStreamHandler'
+        self.logger.addHandler(self.stream)
 
 
 pass_state = click.make_pass_decorator(State, ensure=True)
@@ -56,6 +96,9 @@ remote_name_help = ("The remote name to commit to for Github Pages. This "
                     "overrides the value specified in config")
 force_help = "Force the push to the repository."
 ignore_version_help = "Ignore check that build is not being deployed with an older version of Docums."
+watch_theme_help = ("Include the theme in list of files to watch for live reloading. "
+                    "Ignored when live reload is not used.")
+shell_help = "Use the shell when invoking Git."
 
 
 def add_options(opts):
@@ -71,7 +114,7 @@ def verbose_option(f):
     def callback(ctx, param, value):
         state = ctx.ensure_object(State)
         if value:
-            state.logger.setLevel(logging.DEBUG)
+            state.stream.setLevel(logging.DEBUG)
     return click.option('-v', '--verbose',
                         is_flag=True,
                         expose_value=False,
@@ -83,7 +126,7 @@ def quiet_option(f):
     def callback(ctx, param, value):
         state = ctx.ensure_object(State)
         if value:
-            state.logger.setLevel(logging.ERROR)
+            state.stream.setLevel(logging.ERROR)
     return click.option('-q', '--quiet',
                         is_flag=True,
                         expose_value=False,
@@ -103,17 +146,21 @@ common_config_options = add_options([
     click.option('--use-directory-urls/--no-directory-urls', is_flag=True, default=None, help=use_directory_urls_help)
 ])
 
-pgk_dir = os.path.dirname(os.path.abspath(__file__))
+PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+PKG_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
 @click.version_option(
-    '{} from {} (Python {})'.format(__version__, pgk_dir, sys.version[:3]),
-    '-V', '--version')
+    __version__,
+    '-V', '--version',
+    message=f'%(prog)s, version %(version)s from { PKG_DIR } (Python { PYTHON_VERSION })'
+)
 @common_options
 def cli():
     """
-    Docums - Open source documentation website
+    Docums - Project documentation with Markdown.
     """
 
 
@@ -122,22 +169,12 @@ def cli():
 @click.option('--livereload', 'livereload', flag_value='livereload', help=reload_help, default=True)
 @click.option('--no-livereload', 'livereload', flag_value='no-livereload', help=no_reload_help)
 @click.option('--dirtyreload', 'livereload', flag_value='dirty', help=dirty_reload_help)
+@click.option('--watch-theme', help=watch_theme_help, is_flag=True)
 @common_config_options
 @common_options
 def serve_command(dev_addr, livereload, **kwargs):
     """Run the builtin development server"""
-
-    logging.getLogger('tornado').setLevel(logging.WARNING)
-
-    try:
-        serve.serve(
-            dev_addr=dev_addr,
-            livereload=livereload,
-            **kwargs
-        )
-    except (exceptions.ConfigurationError, OSError) as e:  # pragma: no cover
-        # Avoid ugly, unhelpful traceback
-        raise SystemExit('\n' + str(e))
+    serve.serve(dev_addr=dev_addr, livereload=livereload, **kwargs)
 
 
 @cli.command(name="build")
@@ -147,12 +184,7 @@ def serve_command(dev_addr, livereload, **kwargs):
 @common_options
 def build_command(clean, **kwargs):
     """Build the Docums documentation"""
-
-    try:
-        build.build(config.load_config(**kwargs), dirty=not clean)
-    except exceptions.ConfigurationError as e:  # pragma: no cover
-        # Avoid ugly, unhelpful traceback
-        raise SystemExit('\n' + str(e))
+    build.build(config.load_config(**kwargs), dirty=not clean)
 
 
 @cli.command(name="gh-deploy")
@@ -162,22 +194,19 @@ def build_command(clean, **kwargs):
 @click.option('-r', '--remote-name', help=remote_name_help)
 @click.option('--force', is_flag=True, help=force_help)
 @click.option('--ignore-version', is_flag=True, help=ignore_version_help)
+@click.option('--shell', is_flag=True, help=shell_help)
 @common_config_options
 @click.option('-d', '--site-dir', type=click.Path(), help=site_dir_help)
 @common_options
-def gh_deploy_command(clean, message, remote_branch, remote_name, force, ignore_version, **kwargs):
+def gh_deploy_command(clean, message, remote_branch, remote_name, force, ignore_version, shell, **kwargs):
     """Deploy your documentation to GitHub Pages"""
-    try:
-        cfg = config.load_config(
-            remote_branch=remote_branch,
-            remote_name=remote_name,
-            **kwargs
-        )
-        build.build(cfg, dirty=not clean)
-        gh_deploy.gh_deploy(cfg, message=message, force=force, ignore_version=ignore_version)
-    except exceptions.ConfigurationError as e:  # pragma: no cover
-        # Avoid ugly, unhelpful traceback
-        raise SystemExit('\n' + str(e))
+    cfg = config.load_config(
+        remote_branch=remote_branch,
+        remote_name=remote_name,
+        **kwargs
+    )
+    build.build(cfg, dirty=not clean)
+    gh_deploy.gh_deploy(cfg, message=message, force=force, ignore_version=ignore_version, shell=shell)
 
 
 @cli.command(name="new")
