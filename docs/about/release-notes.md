@@ -13,6 +13,13 @@ You can determine your currently installed version using `docums --version`:
     $ docums --version
     docums, version 1.0.0.0 from /path/to/docums (Python 3.6)
 
+## Version 1.2.4 (2022-05-21)
+
+* Compatibility with Jinja2 3.1.0 (#2800)
+
+  Due to a breaking change in Jinja2, Docums would crash with the message
+  `AttributeError: module 'jinja2' has no attribute 'contextfilter'`
+
 ## Version 1.2.3 (2021-10-12)
 
 * Built-in themes now also support these languages:
